@@ -1,10 +1,10 @@
 # tiny-skill-lint
 
-A zero-dependency SKILL.md frontmatter linter. ~310 LOC, 33 tests, stdlib-only.
+A zero-dependency SKILL.md frontmatter linter. ~310 LOC, 35 tests, stdlib-only.
 
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-33%2F33-brightgreen.svg)](test_tiny_skill_lint.py)
+[![Tests](https://img.shields.io/badge/tests-35%2F35-brightgreen.svg)](test_tiny_skill_lint.py)
 [![CI](https://github.com/hussain-alsaibai/tiny-skill-lint/actions/workflows/ci.yml/badge.svg)](https://github.com/hussain-alsaibai/tiny-skill-lint/actions/workflows/ci.yml)
 
 `tiny-skill-lint` validates the frontmatter of `SKILL.md` files against a flat-key
@@ -99,10 +99,10 @@ JSON form usable directly as a CI gate:
 ## Tests
 
 ```bash
-python -m pytest test_tiny_skill_lint.py -v
+python -m pytest -v
 ```
 
-33 tests, stdlib only. CI runs them across Python 3.8–3.12 and then dogfoods the
+35 tests, stdlib only. CI runs them across Python 3.8–3.12 and then dogfoods the
 linter against `examples/SKILL.md`, so the bundled example cannot drift away from
 what the linter accepts.
 

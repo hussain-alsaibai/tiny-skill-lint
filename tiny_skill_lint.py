@@ -1,15 +1,15 @@
 """tiny-skill-lint: zero-dep SKILL.md frontmatter linter.
 
 Validates the frontmatter of SKILL.md files against a flat-key YAML subset,
-an 18-code error catalogue, and a description token-budget check. Stdlib-only,
-~210 LOC, no third-party dependencies.
+an 18-code error catalogue (E001..E018), and a description character-budget
+check. Stdlib-only, ~310 LOC, no third-party dependencies.
 
 Usage:
     python -m tiny_skill_lint path/to/SKILL.md
     python -m tiny_skill_lint skills/ --format=json --strict
 
-Error codes (E001..E018) are stable and cross-compatible with skillspec/lint,
-skillcheck/core, and openskills/lint. See README.md for the catalogue.
+Exit code is 1 when any record has level "error", so the CLI is usable as a CI
+gate directly. See README.md for the error-code catalogue.
 """
 from __future__ import annotations
 
@@ -21,6 +21,8 @@ import sys
 from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Iterable
+
+__version__ = "0.2.0"
 
 # --- 18-code error catalogue (E001..E018) ---
 # Levels: 'error', 'warn', 'off'. Strict mode promotes 'warn' to 'error'.

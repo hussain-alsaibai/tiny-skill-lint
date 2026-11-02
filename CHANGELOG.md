@@ -21,11 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **4 regression tests** pinning E017 behaviour: fires without punctuation,
   fires when measured to a period, does not fire at exactly 100 characters,
   does not fire on a short description.
+- **Version-consistency test** asserting `pyproject.toml` matches
+  `tiny_skill_lint.__version__`, and `__version__` on the module.
 - **`examples/SKILL.md`** — a valid bundle that CI dogfoods the linter against,
   so the bundled example cannot drift away from what the linter accepts.
 
 ### Changed
 
+- Removed the deprecated `tiny_skill_lint_part2.py` stub, which was a
+  comment-only file kept for history and had no runtime effect.
 - CI self-lint step points at `examples/SKILL.md` instead of `README.md`,
   which was never a SKILL.md and so reported E012 (no frontmatter block).
 - README drops an ecosystem section that named three packages with version
