@@ -270,12 +270,41 @@ class TestFirstSentenceRegression(unittest.TestCase):
 
 
 class TestErrorCatalogue(unittest.TestCase):
-    def test_18_codes_present(self):
-        self.assertEqual(len(tsl.ERROR_CODES), 18)
+    def test_19_codes_present(self):
+        self.assertEqual(len(tsl.ERROR_CODES), 19)
 
-    def test_codes_are_e001_to_e018(self):
-        for i in range(1, 19):
+    def test_codes_are_e001_to_e019(self):
+        for i in range(1, 20):
             self.assertIn(f"E{i:03d}", tsl.ERROR_CODES)
+
+
+class TestDirectoryNameMatch(unittest.TestCase):
+    """agentskills.io spec: 'name' must match the parent directory name.
+
+    The rule must be proven to fire, not merely exist: a skill whose
+    directory and name disagree is the exact shape that made 2 of our own
+    skills unloadable in any spec-compliant client.
+    """
+
+    def _skill_in(self, dirname, name):
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp) / dirname
+            d.mkdir()
+            (d / "SKILL.md").write_text(
+                "---\nname: " + name + "\ndescription: A test.\nversion: 1.0.0\nwhen_to_use: x\n---\n"
+            )
+            return tsl.lint_paths([d])
+
+    def test_mismatched_directory_fires_e019(self):
+        recs = self._skill_in("browser-automation", "browser")
+        self.assertIn("E019", [r.code for r in recs])
+
+    def test_matching_directory_is_clean(self):
+        recs = self._skill_in("browser-automation", "browser-automation")
+        self.assertNotIn("E019", [r.code for r in recs])
+
+    def test_e019_is_an_error_level(self):
+        self.assertEqual(tsl.ERROR_CODES["E019"][0], "error")
 
 
 class TestTrailingNewline(unittest.TestCase):

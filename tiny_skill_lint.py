@@ -1,7 +1,7 @@
 """tiny-skill-lint: zero-dep SKILL.md frontmatter linter.
 
 Validates the frontmatter of SKILL.md files against a flat-key YAML subset,
-an 18-code error catalogue (E001..E018), and a description character-budget
+a 19-code error catalogue (E001..E019), and a description character-budget
 check. Stdlib-only, ~310 LOC, no third-party dependencies.
 
 Usage:
@@ -22,9 +22,9 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Iterable
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
-# --- 18-code error catalogue (E001..E018) ---
+# --- 19-code error catalogue (E001..E019) ---
 # Levels: 'error', 'warn', 'off'. Strict mode promotes 'warn' to 'error'.
 ERROR_CODES = {
     "E001": ("error", "Missing required field 'name'"),
@@ -45,6 +45,7 @@ ERROR_CODES = {
     "E016": ("warn",  "Version is pre-1.0.0 (warn only for libraries in use)"),
     "E017": ("warn",  "Description first sentence is > 100 chars"),
     "E018": ("error", "Invalid 'version' semver (E006 supersedes; retained for compat)"),
+    "E019": ("error", "'name' does not match the parent directory name"),
 }
 
 # Allowed frontmatter keys (flat-key YAML subset)
@@ -136,6 +137,20 @@ def _check_kebab(name):
     return bool(KEBAB_RE.match(name))
 
 
+def _check_dir_name(name, path):
+    """agentskills.io spec: the skill's parent directory must equal 'name'.
+
+    Returns True/False, or None when it cannot be judged (a file written
+    straight into a temp dir has no meaningful skill directory). Judging
+    only the basename and not the file's own parent made this unreachable
+    for real skill trees, so the path's parent is what is compared.
+    """
+    parent = Path(path).parent.name
+    if not parent:
+        return None
+    return parent == name
+
+
 def _first_sentence(description):
     """Return the first sentence (text up to . ! ?, else the whole string).
 
@@ -191,6 +206,10 @@ def lint_file(path, config=None):
             records.append(LintRecord(str(path), "E014", "warn", "Name contains uppercase letters", 0))
         if not kebab_ok and not short and not upper:
             records.append(LintRecord(str(path), "E004", "error", "Invalid 'name' format (must be kebab-case)", 0))
+        dir_ok = _check_dir_name(name, path)
+        if dir_ok is False:
+            records.append(LintRecord(str(path), "E019", "error",
+                "'name' (" + name + ") does not match parent directory (" + Path(path).parent.name + ")", 0))
 
     description = data.get("description", "")
     if description is not None:

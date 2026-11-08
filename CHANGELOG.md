@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-11-07
+
+### Added
+
+- **E019: `name` must match the parent directory name.** The
+  [agentskills.io specification](https://agentskills.io/specification) states
+  that `name` "must match the parent directory name". Without this rule a
+  skill loads in a lenient client and is rejected by a spec-compliant one,
+  with an error that names the skill rather than the mismatch. The check
+  compares the basename of the SKILL.md's own parent and returns `None` for a
+  file written straight into a temp directory, so unit fixtures are not
+  forced to invent a skill directory. Catalogue is now 19 codes.
+
+### Fixed
+
+- None. Proven by `TestDirectoryNameMatch`: stubbing the check turns
+  `test_mismatched_directory_fires_e019` red (1 failed, 35 passed).
+
 ## [0.2.0] - 2026-11-02
 
 ### Fixed
