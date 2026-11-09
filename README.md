@@ -104,7 +104,7 @@ python -m pytest -v
 ```
 
 35 tests, stdlib only. CI runs them across Python 3.8–3.12 and then dogfoods the
-linter against `examples/SKILL.md`, so the bundled example cannot drift away from
+linter against `examples/skill-authoring/SKILL.md`, so the bundled example cannot drift away from
 what the linter accepts.
 
 ## License
