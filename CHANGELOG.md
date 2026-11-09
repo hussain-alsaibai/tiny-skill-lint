@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- **The dogfood step could not pass its own new rule.** `examples/SKILL.md`
+  lived in a directory named `examples` while its `name` was
+  `skill-authoring`, so E019 — the rule this branch adds — failed on the
+  repository's own bundled example, on every Python version. The example now
+  lives at `examples/skill-authoring/SKILL.md`, which is the shape the spec
+  requires and the shape a real bundle has.
+- CI runs the suite with `-v` so a failing job names the test.
+
 ## [0.3.0] - 2026-11-07
 
 ### Added
@@ -41,14 +53,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   does not fire on a short description.
 - **Version-consistency test** asserting `pyproject.toml` matches
   `tiny_skill_lint.__version__`, and `__version__` on the module.
-- **`examples/SKILL.md`** — a valid bundle that CI dogfoods the linter against,
+- **`examples/skill-authoring/SKILL.md`** — a valid bundle that CI dogfoods the linter against,
   so the bundled example cannot drift away from what the linter accepts.
 
 ### Changed
 
 - Removed the deprecated `tiny_skill_lint_part2.py` stub, which was a
   comment-only file kept for history and had no runtime effect.
-- CI self-lint step points at `examples/SKILL.md` instead of `README.md`,
+- CI self-lint step points at `examples/skill-authoring/SKILL.md` instead of `README.md`,
   which was never a SKILL.md and so reported E012 (no frontmatter block).
 - README drops an ecosystem section that named three packages with version
   numbers that do not exist (`skillspec/lint` v0.3.0, `skillcheck/core` v0.4.0,
