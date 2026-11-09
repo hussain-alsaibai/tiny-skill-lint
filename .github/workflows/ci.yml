@@ -28,4 +28,4 @@ jobs:
           python -m pytest test_tiny_skill_lint.py test_version_consistency.py -v
       - name: Self-lint the bundled example (dogfood)
         run: |
-          python -m tiny_skill_lint examples/SKILL.md --format=json
+          python -m tiny_skill_lint examples/skill-authoring/SKILL.md --format=json

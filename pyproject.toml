@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tiny-skill-lint"
-version = "0.2.0"
+version = "0.3.0"
 description = "Zero-dependency SKILL.md frontmatter linter. ~310 LOC, 35 tests, stdlib-only."
 readme = "README.md"
 license = {text = "MIT"}

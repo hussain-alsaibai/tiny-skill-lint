@@ -1,14 +1,14 @@
 # tiny-skill-lint
 
-A zero-dependency SKILL.md frontmatter linter. ~310 LOC, 35 tests, stdlib-only.
+A zero-dependency SKILL.md frontmatter linter. ~330 LOC, 36 tests, stdlib-only.
 
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-35%2F35-brightgreen.svg)](test_tiny_skill_lint.py)
+[![Tests](https://img.shields.io/badge/tests-36%2F36-brightgreen.svg)](test_tiny_skill_lint.py)
 [![CI](https://github.com/hussain-alsaibai/tiny-skill-lint/actions/workflows/ci.yml/badge.svg)](https://github.com/hussain-alsaibai/tiny-skill-lint/actions/workflows/ci.yml)
 
 `tiny-skill-lint` validates the frontmatter of `SKILL.md` files against a flat-key
-YAML subset, an 18-code error catalogue, and a `description` character-budget check.
+YAML subset, a 19-code error catalogue, and a `description` character-budget check.
 It is a single stdlib-only file, so it drops into any repo with no dependency tree.
 
 ## Why tiny-skill-lint?
@@ -19,7 +19,7 @@ CI gate. `tiny-skill-lint` is a single-file Python tool that:
 
 - Validates required fields (`name`, `description`, `version`)
 - Enforces an 800-character description budget (warn on overrun)
-- Emits against the 18-code error catalogue (`E001`–`E018`)
+- Emits against the 19-code error catalogue (`E001`–`E019`)
 - Supports CI-friendly JSON output via `--format=json`
 - Exits non-zero on errors, so it is usable as a CI gate as-is
 - Configurable via `lint.config.json`
@@ -79,6 +79,7 @@ JSON form usable directly as a CI gate:
 | E016 | warn  | `version` is pre-1.0.0 |
 | E017 | warn  | `description` first sentence is > 100 chars (no clear lead) |
 | E018 | error | Invalid `version` semver (E006 supersedes; E018 retained for compat) |
+| E019 | error | `name` does not match the parent directory name (agentskills.io spec) |
 
 ## Configuration
 
@@ -103,7 +104,7 @@ python -m pytest -v
 ```
 
 35 tests, stdlib only. CI runs them across Python 3.8–3.12 and then dogfoods the
-linter against `examples/SKILL.md`, so the bundled example cannot drift away from
+linter against `examples/skill-authoring/SKILL.md`, so the bundled example cannot drift away from
 what the linter accepts.
 
 ## License
