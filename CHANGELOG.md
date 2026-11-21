@@ -9,6 +9,60 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- None yet.
+
+## [0.4.0] - 2026-11-21
+
+### Added
+
+- **`tiny-skill-scan`** — a prompt-injection scanner for the SKILL.md *body*.
+  The frontmatter linter answers "is this document well-formed?"; it says
+  nothing about what the document tells the agent to do, and a well-formed
+  SKILL.md is the cheapest delivery vehicle for an injection because the
+  agent loads it as instructions by design. Ten rules: S001 authority
+  override, S002 false authority, S003 exfiltration, S004 credential
+  harvesting, S005 instructions in an HTML comment, S006 invisible / bidi /
+  matched-isolate runs, S007 concealment, S008 remote-into-shell, S009
+  self-granted scope, S010 answer-shaped fence.
+- `--format json`, `--strict`, and recursive directory scanning.
+- `examples/clean-corpus/` — three real SKILL.md files that must stay clean.
+
+### Fixed
+
+- **Line numbers pointed at the wrong line.** `strip_frontmatter` returned the
+  body with the frontmatter *removed*, so a finding on the fifth line of the
+  file was reported as line 3. It now blanks the frontmatter while preserving
+  its line count (`preserve_lines=True`), which is the difference between a
+  report a reviewer can act on and one that sends them to the wrong
+  paragraph.
+- **The CI test step named its test files explicitly.** A new test file would
+  have passed locally and never executed in CI. The step now collects by
+  pattern.
+
+### Notes on false positives
+
+A security linter that fires on correct documentation gets ignored within a
+day, and the real finding goes with it. The first draft of S003 flagged every
+`curl` example line in this workspace's own skills. The shipped rules follow
+three conventions, each covered by a test:
+
+- **Prose rules skip fenced blocks and blockquotes.** A security skill that
+  *quotes* "ignore previous instructions" inside an example, or in a `>`
+  paragraph describing the attack, is not doing it. Rules that describe
+  executed content (S003, S004, S008) still fire inside fences, because that
+  is where the command lives.
+- **A verb list describes where the value ends up, not what it is.** `echo
+  $TOKEN` and `cat ~/.ssh/id_rsa` are how a developer checks a value locally
+  and both appear in correct documentation, so they are not credential
+  harvesting. S004 fires on verbs that put the value into the model's reply.
+- **A single zero-width character or directional isolate is prose.** Only a
+  run of three or more, a bidi override or embedding at any count, or a
+  matched isolate pair, is flagged — otherwise every Arabic, Hebrew, or
+  Persian skill becomes a false positive.
+
+
+### Fixed
+
 - **The dogfood step could not pass its own new rule.** `examples/SKILL.md`
   lived in a directory named `examples` while its `name` was
   `skill-authoring`, so E019 — the rule this branch adds — failed on the

@@ -22,7 +22,7 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Iterable
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 # --- 19-code error catalogue (E001..E019) ---
 # Levels: 'error', 'warn', 'off'. Strict mode promotes 'warn' to 'error'.

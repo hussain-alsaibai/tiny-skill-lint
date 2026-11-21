@@ -45,6 +45,16 @@ class TestVersionConsistency(unittest.TestCase):
             "pyproject.toml version does not match tiny_skill_lint.__version__",
         )
 
+    def test_scanner_matches_pyproject_version(self) -> None:
+        """Two modules in one distribution must not drift apart."""
+        import tiny_skill_scan
+
+        self.assertEqual(
+            _pyproject_version(),
+            tiny_skill_scan.__version__,
+            "pyproject.toml version does not match tiny_skill_scan.__version__",
+        )
+
     def test_version_is_semver(self) -> None:
         version = _pyproject_version()
         self.assertRegex(
