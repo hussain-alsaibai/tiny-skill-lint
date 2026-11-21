@@ -27,7 +27,13 @@ jobs:
           pip install pytest
       - name: Run tests
         run: |
-          python -m pytest test_tiny_skill_lint.py test_version_consistency.py -v
+          # Collect by pattern, not by an explicit file list: a new test file
+          # that nobody adds to this line silently never runs in CI while
+          # passing locally.
+          python -m pytest -v
       - name: Self-lint the bundled example (dogfood)
         run: |
           python -m tiny_skill_lint examples/skill-authoring/SKILL.md --format=json
+      - name: Scan the shipped skills for instructions (dogfood)
+        run: |
+          python -m tiny_skill_scan examples/clean-corpus --format json

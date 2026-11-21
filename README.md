@@ -1,10 +1,10 @@
 # tiny-skill-lint
 
-A zero-dependency SKILL.md frontmatter linter. ~330 LOC, 36 tests, stdlib-only.
+Zero-dependency SKILL.md tooling: a frontmatter linter **and** a prompt-injection scanner for the body. Stdlib-only.
 
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-36%2F36-brightgreen.svg)](test_tiny_skill_lint.py)
+[![Tests](https://img.shields.io/badge/tests-97%2F97-brightgreen.svg)
 [![CI](https://github.com/hussain-alsaibai/tiny-skill-lint/actions/workflows/ci.yml/badge.svg)](https://github.com/hussain-alsaibai/tiny-skill-lint/actions/workflows/ci.yml)
 
 `tiny-skill-lint` validates the frontmatter of `SKILL.md` files against a flat-key
@@ -23,6 +23,59 @@ CI gate. `tiny-skill-lint` is a single-file Python tool that:
 - Supports CI-friendly JSON output via `--format=json`
 - Exits non-zero on errors, so it is usable as a CI gate as-is
 - Configurable via `lint.config.json`
+
+## Why also scan the body?
+
+`tiny-skill-lint` answers *is this document well-formed?* It does not answer
+*what does this document tell the agent to do?* — and a well-formed SKILL.md is
+the cheapest delivery vehicle for a prompt injection, because the agent loads
+it **as instructions**, by design. A skill can pass the frontmatter gate and
+still tell the agent to exfiltrate `~/.ssh`.
+
+`tiny-skill-scan` reads the body. Ten rules, three groups:
+
+| code | severity | what it catches |
+|---|---|---|
+| S001 | high | "ignore all previous instructions", rule override |
+| S002 | high | fake system role, "this skill supersedes policy" |
+| S003 | high | exfiltration: upload/send data to a collector |
+| S004 | high | credential harvesting: print the API key into the reply |
+| S005 | high | instructions hidden in an HTML comment |
+| S006 | high | zero-width runs, bidi overrides, matched isolates |
+| S007 | medium | "don't tell the user", concealment |
+| S008 | medium | `curl … \| bash` from a remote document |
+| S009 | medium | self-granted scope, "no approval required" |
+| S010 | low | a fence that supplies the model's answer verbatim |
+
+```bash
+tiny-skill-scan skills/                    # human output, exit 1 only on high
+tiny-skill-scan SKILL.md --format json     # machine-readable
+tiny-skill-scan skills/ --strict           # exit 1 on any finding
+```
+
+### The false-positive rule
+
+A security linter that fires on correct documentation is worse than no
+linter: it gets ignored within a day, and so does the real finding behind it.
+The first draft of S003 flagged every `curl` example line in a real skills
+tree. Three conventions keep it usable, each covered by a test:
+
+- **Prose rules skip fenced blocks and blockquotes.** A security skill that
+  *quotes* an attack — in a code fence, or in a `>` paragraph describing the
+  shape — is not performing it. Rules that describe executed content (S003,
+  S004, S008) still fire inside fences, because that is where the command
+  lives; a quote on the next line still fires.
+- **A verb list describes where the value ends up.** `echo $TOKEN` and
+  `cat ~/.ssh/id_rsa` are how a developer checks a value locally, and both
+  appear in correct documentation. S004 fires on verbs that put the value
+  into the model's reply, which is where it can be forwarded.
+- **A single zero-width char or isolate is prose.** Only a run of three or
+  more, a bidi override or embedding at any count, or a matched isolate pair,
+  is flagged — otherwise every Arabic, Hebrew, or Persian skill is a false
+  positive.
+
+Findings are reviewable by construction: line, column, the matched span, and
+one sentence of why. Nothing is auto-fixed and nothing is silently dropped.
 
 ## Install
 

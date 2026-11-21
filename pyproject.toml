@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tiny-skill-lint"
-version = "0.3.0"
-description = "Zero-dependency SKILL.md frontmatter linter. ~310 LOC, 35 tests, stdlib-only."
+version = "0.4.0"
+description = "Zero-dependency SKILL.md tooling: frontmatter linter (19 codes) plus a prompt-injection scanner for the skill body. Stdlib-only."
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.8"
 authors = [{name = "OpenClaw", email = "hussain.alsaibai@gmail.com"}]
-keywords = ["skill-md", "linter", "frontmatter", "yaml", "agent", "openclaw", "agent-skills", "ci"]
+keywords = ["skill-md", "linter", "frontmatter", "prompt-injection", "security", "agent", "openclaw", "agent-skills", "ci"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -33,6 +33,7 @@ Issues = "https://github.com/hussain-alsaibai/tiny-skill-lint/issues"
 
 [project.scripts]
 tiny-skill-lint = "tiny_skill_lint:main"
+tiny-skill-scan = "tiny_skill_scan:main"
 
 [tool.setuptools]
-py-modules = ["tiny_skill_lint"]
+py-modules = ["tiny_skill_lint", "tiny_skill_scan"]
